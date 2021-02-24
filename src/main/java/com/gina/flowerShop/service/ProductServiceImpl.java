@@ -78,4 +78,13 @@ public class ProductServiceImpl implements ProductService{
         return productRepository.findById(idProduct).map(this::toDTO);
     }
 
+    @Override
+    public List<String> findDistinctOrigin() {
+        List<String>originList = productRepository.findDistinctOrigin();
+        List<String>origins = new ArrayList<>();
+        for(String origin:originList){
+            origins.add(origin);
+        }
+        return originList;
+    }
 }

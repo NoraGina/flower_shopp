@@ -10,4 +10,5 @@ public interface ProductService {
     Optional<ProductDto> findOne(Long idProduct);
     void save(ProductDto productDto);
     void delete(Long idProduct);
+    List<String>findDistinctOrigin();
 }
