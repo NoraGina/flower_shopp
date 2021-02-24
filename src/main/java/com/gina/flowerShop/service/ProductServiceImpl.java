@@ -87,4 +87,39 @@ public class ProductServiceImpl implements ProductService{
         }
         return originList;
     }
+    @Override
+    @Transactional(readOnly = true)
+    public List<ProductDto> findAllByCategoryId(Long idCategory) {
+        List<Product> productModelList = productRepository.findAllByCategoryId(idCategory);
+        List<ProductDto>productDtoList = new ArrayList<>();
+        for(Product product:productModelList){
+            ProductDto productDto = toDTO(product);
+            productDtoList.add(productDto);
+        }
+        return productDtoList;
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<ProductDto> findAllByStockGreaterThan(int stock) {
+        List<Product> productModelList = productRepository.findAllByStockGreaterThan(stock);
+        List<ProductDto>productDtoList = new ArrayList<>();
+        for(Product product:productModelList){
+            ProductDto productDto = toDTO(product);
+            productDtoList.add(productDto);
+        }
+        return productDtoList;
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<ProductDto> findAllByCategoryIdAndStockGreaterThan(Long idCategory, int stock) {
+        List<Product> productModelList = productRepository.findAllByCategoryIdAndStockGreaterThan(idCategory, stock);
+        List<ProductDto>productDtoList = new ArrayList<>();
+        for(Product product:productModelList){
+            ProductDto productDto = toDTO(product);
+            productDtoList.add(productDto);
+        }
+        return productDtoList;
+    }
 }

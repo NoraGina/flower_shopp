@@ -11,4 +11,7 @@ public interface ProductService {
     void save(ProductDto productDto);
     void delete(Long idProduct);
     List<String>findDistinctOrigin();
+    List<ProductDto> findAllByCategoryId(Long idCategory);
+    List<ProductDto>findAllByStockGreaterThan( int stock);
+    List<ProductDto>findAllByCategoryIdAndStockGreaterThan(Long idCategory, int stock);
 }

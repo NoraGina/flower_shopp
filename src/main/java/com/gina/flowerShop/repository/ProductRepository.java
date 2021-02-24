@@ -12,7 +12,7 @@ import java.util.List;
 public interface ProductRepository extends JpaRepository<Product, Long> {
     @Query("SELECT DISTINCT p.origin FROM Product p")
     List<String> findDistinctOrigin();
-    
+
     @Query("select p from Product p  INNER JOIN p.categories c where c.idCategory=:idCategory")
     List<Product> findAllByCategoryId(@Param("idCategory")Long idCategory);
 
