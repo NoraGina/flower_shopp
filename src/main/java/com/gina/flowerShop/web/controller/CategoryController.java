@@ -74,7 +74,7 @@ public class CategoryController {
         }
         redirectAttributes.addFlashAttribute("message", "Categoria "+ category.getCategoryName()+" s-a editat cu success");
         categoryRepository.save(category);
-        
+
 
         return "redirect:/provider/categories/list";
     }
