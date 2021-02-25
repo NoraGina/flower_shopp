@@ -1,5 +1,7 @@
 package com.gina.flowerShop.web.controller;
 
+import com.gina.flowerShop.repository.CategoryRepository;
+import com.gina.flowerShop.service.ProductService;
 import com.gina.flowerShop.service.UserService;
 import com.gina.flowerShop.web.dto.UserDto;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,10 +18,10 @@ import java.util.List;
 public class MainController {
     @Autowired private UserService userService;
     //@Autowired private CustomerService customerService;
-    /*@Autowired
+    @Autowired
     private ProductService productService;
     @Autowired
-    private CategoryRepository categoryRepository;*/
+    private CategoryRepository categoryRepository;
 
     @GetMapping("/login")
     public String login() {
@@ -29,8 +31,8 @@ public class MainController {
 
     @GetMapping("/")
     public String homePage(Model model){
-        //model.addAttribute("products", productService.findAll());
-        //model.addAttribute("categoryList", categoryRepository.findByOrderByCategoryNameAsc());
+        model.addAttribute("products", productService.findAll());
+
 
         return "index";
     }
@@ -60,5 +62,11 @@ public class MainController {
         model.addAttribute("currentUser", user);
 
         return "dashboard";
+    }
+
+    @GetMapping("/available/products")
+    public String getAvailableProducts(Model model){
+        model.addAttribute("products", productService.findAllByStockGreaterThan(1));
+        return "available-products";
     }
 }

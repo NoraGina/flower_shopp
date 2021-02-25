@@ -150,7 +150,7 @@ public class ProductController {
         ProductDto productDto = productService.findOne(idProduct).get();
         redirectAttributes.addFlashAttribute("message",productDto.getProductName()+" a fost sters");
         productService.delete(idProduct);
-       
+
         return "redirect:/provider/product/list";
     }
 
