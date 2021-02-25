@@ -351,6 +351,9 @@ button:hover{
 </head>
 <body>
 <div class="container">
+    <div class="message-container">
+        <h3 th:text="${message}"></h3>
+    </div>
     <div class="filter-container">
         <div class="column left">
             <form th:action="@{/provider/products/category}" method="get">

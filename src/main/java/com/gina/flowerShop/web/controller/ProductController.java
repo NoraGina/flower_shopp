@@ -11,6 +11,7 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.validation.Valid;
 import java.io.IOException;
@@ -26,8 +27,7 @@ public class ProductController {
     @Autowired
     private CategoryRepository categoryRepository;
 
-    @Autowired
-    private ProductRepository productRepository;
+
 
     @GetMapping("/provider/add/product/form")
     public String addProductForm(Model model){
@@ -127,13 +127,15 @@ public class ProductController {
 
     @PostMapping("/provider/update/product/{idProduct}")
     public String updateProduct(@PathVariable("idProduct") Long idProduct, @Valid @ModelAttribute ProductDto productDto,
-                                BindingResult result, Model model,  @RequestParam("imageFile") MultipartFile file){
+                                BindingResult result, Model model, @RequestParam("imageFile") MultipartFile file,
+                                RedirectAttributes redirectAttributes){
         if(result.hasErrors()){
             return "provider-update-product";
         }
         try{
             byte[] byteObjects = convertToBytes(file);
             productDto.setImage(byteObjects);
+            redirectAttributes.addFlashAttribute("message", productDto.getProductName()+" a fost editat cu succes");
             productService.save(productDto);
         }catch (Exception e){
             e.printStackTrace();
@@ -144,7 +146,9 @@ public class ProductController {
     }
 
     @GetMapping("/provider/delete/product/{idProduct}")
-    public String deleteProduct(@PathVariable("idProduct")Long idProduct, Model model){
+    public String deleteProduct(@PathVariable("idProduct")Long idProduct, Model model, RedirectAttributes redirectAttributes){
+        ProductDto productDto = productService.findOne(idProduct).get();
+        redirectAttributes.addFlashAttribute(productDto.getProductName()+" a fost sters");
         productService.delete(idProduct);
         model.addAttribute("products", productService.findAll());
         return "redirect:/provider/product/list";
