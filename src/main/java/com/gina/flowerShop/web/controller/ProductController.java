@@ -148,9 +148,9 @@ public class ProductController {
     @GetMapping("/provider/delete/product/{idProduct}")
     public String deleteProduct(@PathVariable("idProduct")Long idProduct, Model model, RedirectAttributes redirectAttributes){
         ProductDto productDto = productService.findOne(idProduct).get();
-        redirectAttributes.addFlashAttribute(productDto.getProductName()+" a fost sters");
+        redirectAttributes.addFlashAttribute("message",productDto.getProductName()+" a fost sters");
         productService.delete(idProduct);
-        model.addAttribute("products", productService.findAll());
+       
         return "redirect:/provider/product/list";
     }
 

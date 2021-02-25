@@ -35,7 +35,12 @@ input, select{
 input{
     width: 60px;
 }
-
+h3{
+color:#4d0026;
+font-family:Georgia;
+font-style:italic;
+text-align:center;
+}
 input:focus, select:focus{
     border:1px solid rgb(154, 191, 192);
 }
@@ -180,6 +185,9 @@ tbody tr:nth-child(odd) {
 .container{
     background-color: azure;
     padding: 10px 10px 20px;
+}
+.message-container{
+margin:10px auto ;
 }
 /* ********table buttons***** */
 .action-btn{
@@ -350,10 +358,6 @@ button:hover{
     </style>
 </head>
 <body>
-<div class="container">
-    <div class="message-container">
-        <h3 th:text="${message}"></h3>
-    </div>
     <div class="filter-container">
         <div class="column left">
             <form th:action="@{/provider/products/category}" method="get">
@@ -385,6 +389,10 @@ button:hover{
         </div><!--End col-->
     </div><!-- End filter-container-->
 
+    <div class="container">
+        <div class="message-container">
+            <h3 th:text="${message}"></h3>
+        </div>
 
     <div class="table-container">
         <table>
