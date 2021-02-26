@@ -42,7 +42,7 @@ public class OrderItem {
         this.quantity = quantity;
         this.orderCustomer = orderCustomer;
     }
-    
+
 
     public OrderItem(Product product, int quantity) {
         this.product = product;
