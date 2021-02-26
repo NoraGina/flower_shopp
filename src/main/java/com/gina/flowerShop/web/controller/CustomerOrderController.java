@@ -15,6 +15,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpSession;
 import java.time.LocalDate;
@@ -98,5 +100,55 @@ public class CustomerOrderController {
         }
         return -1;
     }
+
+    @RequestMapping("/remove/{idProduct}")
+    public String removeItem(@PathVariable("idProduct") Long idProduct, @AuthenticationPrincipal UserDetails currentUser,
+                             Model model) {
+        OrderCustomer orderCustomer = (OrderCustomer) httpSession.getAttribute("order");
+        List<OrderItem> orderItemList =  orderCustomer.getOrderItemList();
+        int index = this.exists(idProduct, orderItemList);
+        orderItemList.remove(index);
+        double total=0;
+
+        for(OrderItem orderItem:orderItemList){
+            total+=orderItem.getProduct().getPrice()*orderItem.getQuantity();
+
+        }
+        orderCustomer.setOrderItemList(orderItemList);
+        model.addAttribute("total", total);
+
+        return "redirect:/customer/view/cart/form";
+    }
+
+    @GetMapping("/customer/view/cart/form")
+    public String customerViewCart(Model model, @AuthenticationPrincipal UserDetails currentUser,
+                                   RedirectAttributes redirectAttributes){
+        if(httpSession.getAttribute("order") !=null){
+            OrderCustomer orderCustomer = (OrderCustomer) httpSession.getAttribute("order");
+            orderCustomer.setStatus(Status.AFFECTED);
+            orderCustomer.setDate(LocalDate.now());
+            orderCustomer.setTime(LocalTime.now());
+            List<OrderItem>orderItemList = orderCustomer.getOrderItemList();
+            double total=0;
+
+            for(OrderItem orderItem:orderItemList){
+                total+=orderItem.getProduct().getPrice()*orderItem.getQuantity();
+
+            }
+
+            //orderCustomer.setOrderItemList(orderItemList);
+            Customer customer = customerRepository.findByUsername(currentUser.getUsername());
+            orderCustomer.setCustomer(customer);
+            model.addAttribute("customer", customer);
+            model.addAttribute("total", total);
+            model.addAttribute("shippingAddresses", shippingAddressRepository.findAllByCustomerId(customer.getId()));
+            model.addAttribute("items", orderItemList);
+            return "customer-view-cart";
+        }
+        Customer customer = customerRepository.findByUsername(currentUser.getUsername());
+        redirectAttributes.addFlashAttribute("message", customer.getFullName()+", nu aveti produse in cos");
+        return "redirect:/customer/byPage";
+    }
+
 
 }
