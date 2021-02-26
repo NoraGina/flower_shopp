@@ -5,6 +5,7 @@ import com.gina.flowerShop.repository.*;
 import com.gina.flowerShop.service.OrderCustomerService;
 import com.gina.flowerShop.service.ProductService;
 import com.gina.flowerShop.web.dto.CustomerDto;
+import com.gina.flowerShop.web.dto.OrderCustomerDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -148,6 +149,12 @@ public class CustomerOrderController {
         return "redirect:/customer/byPage";
     }
 
+    @GetMapping("/customer/order")
+    private String displayCustomerOrder(Model model){
+
+        return "customer-order";
+    }
+
     @GetMapping("/customer/cart/form")
     public String displayCartForm(@AuthenticationPrincipal UserDetails currentUser, Model model){
         OrderCustomer orderCustomer = (OrderCustomer) httpSession.getAttribute("order");
@@ -177,7 +184,7 @@ public class CustomerOrderController {
         model.addAttribute("shippingAddresses", shippingAddresses);
         model.addAttribute("orderCustomer", orderCustomer);
 
-        return "customer-cart";
+        return "customer-save-cart";
     }
 
     @PostMapping("/customer/save/order")
@@ -185,7 +192,7 @@ public class CustomerOrderController {
                             BindingResult result, @AuthenticationPrincipal UserDetails currentUser,
                             Model model){
         if(result.hasErrors()){
-            return "customer-cart";
+            return "customer-save-cart";
         }
         Customer customer = customerRepository.findByUsername(currentUser.getUsername());
 
@@ -265,7 +272,7 @@ public class CustomerOrderController {
         model.addAttribute("value", value);
         attributes.addFlashAttribute("message", "Comanda a fost editata cu succes!");
 
-        return "customer-order";
+        return "redirect:customer-order";
     }
 
     @Transactional
