@@ -97,7 +97,7 @@ public class OrderCustomerDto {
     public void setOrderItemList(List<OrderItem> orderItemList) {
         this.orderItemList = orderItemList;
     }
-    
+
 
     @Override
     public String toString() {
