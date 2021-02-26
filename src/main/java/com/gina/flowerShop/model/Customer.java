@@ -27,6 +27,22 @@ public class Customer extends User{
         this.orderCustomerSet = orderCustomerSet;
     }
 
+    public Set<ShippingAddress> getShippingAddresses() {
+        return shippingAddresses;
+    }
+
+    public void setShippingAddresses(Set<ShippingAddress> shippingAddresses) {
+        this.shippingAddresses = shippingAddresses;
+    }
+
+    public Set<OrderCustomer> getOrderCustomerSet() {
+        return orderCustomerSet;
+    }
+
+    public void setOrderCustomerSet(Set<OrderCustomer> orderCustomerSet) {
+        this.orderCustomerSet = orderCustomerSet;
+    }
+
     @Override
     public String toString() {
         return "Customer{" +
