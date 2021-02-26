@@ -1,8 +1,10 @@
 package com.gina.flowerShop.web.controller;
 
 import com.gina.flowerShop.repository.CategoryRepository;
+import com.gina.flowerShop.service.CustomerService;
 import com.gina.flowerShop.service.ProductService;
 import com.gina.flowerShop.service.UserService;
+import com.gina.flowerShop.web.dto.CustomerDto;
 import com.gina.flowerShop.web.dto.UserDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -17,7 +19,7 @@ import java.util.List;
 @Controller
 public class MainController {
     @Autowired private UserService userService;
-    //@Autowired private CustomerService customerService;
+    @Autowired private CustomerService customerService;
     @Autowired
     private ProductService productService;
     @Autowired
@@ -39,7 +41,7 @@ public class MainController {
 
     @GetMapping("/customer/byPage")
     public String byPage(Model model, @AuthenticationPrincipal UserDetails currentUser){
-        /*CustomerDto customerDto = customerService.findByUsername(currentUser.getUsername());
+        CustomerDto customerDto = customerService.findByUsername(currentUser.getUsername());
         model.addAttribute("customer", customerDto);
         model.addAttribute("products", productService.findAll());
         model.addAttribute("categoryList", categoryRepository.findByOrderByCategoryNameAsc());
@@ -48,7 +50,7 @@ public class MainController {
             s = s.replaceAll(",", "");
             origins.add(s);
         }
-        model.addAttribute("origins",origins);*/
+        model.addAttribute("origins",origins);
         return "customer-byPage";
     }
 
