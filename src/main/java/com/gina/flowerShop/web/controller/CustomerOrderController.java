@@ -18,10 +18,7 @@ import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Controller
 public class CustomerOrderController {
@@ -208,6 +205,64 @@ public class CustomerOrderController {
         model.addAttribute("orderCustomer", orderCustomer);
         model.addAttribute("customer", customer);
         httpSession.removeAttribute("order");
+
+        return "customer-order";
+    }
+
+    @GetMapping("/customer/update/order/form/{idOrderCustomer}")
+    public String displayUpdateOrderForm(@PathVariable("idOrderCustomer") Long idOrderCustomer,
+                                         Model model){
+        Optional<OrderCustomer> optionalOrderCustomer = orderCustomerRepository.findById(idOrderCustomer);
+        if(optionalOrderCustomer.isPresent()){
+            final OrderCustomer orderCustomer = optionalOrderCustomer.get();
+            Customer customer = orderCustomer.getCustomer();
+            ShippingAddress shippingAddress = orderCustomer.getShippingAddress();
+            List<OrderItem>orderItemList = orderItemRepository.findAllByIdOrderCustomer(idOrderCustomer);
+
+            orderCustomer.setOrderItemList(orderItemList);
+            model.addAttribute("orderCustomer", orderCustomer);
+            model.addAttribute("customer", customer);
+            model.addAttribute("shippingAddress", shippingAddress);
+
+
+        }else {
+            new IllegalArgumentException("Invalid order Id:" + idOrderCustomer);
+        }
+
+        return "customer-update-order";
+    }
+
+
+
+    @PostMapping("/customer/update/order/{idOrderCustomer}")
+    public String customerUpdateOrder(@PathVariable(value="idOrderCustomer", required = false) Long idOrderCustomer,
+                                      @Valid @ModelAttribute("orderCustomer") OrderCustomer orderCustomer,
+                                      BindingResult result,@AuthenticationPrincipal UserDetails currentUser,
+                                      RedirectAttributes attributes, Model model){
+        if(result.hasErrors()){
+            return "customer-update-order";
+        }
+        Customer customer = customerRepository.findByUsername(currentUser.getUsername());
+        orderCustomer.setCustomer(customer);
+        ShippingAddress shippingAddress = orderCustomer.getShippingAddress();
+        shippingAddress.setCustomer(customer);
+
+        orderCustomer.getOrderItemList().forEach(item -> item.setOrderCustomer(orderCustomer));
+        // orderCustomer.getOrderItemList().forEach(orderItem ->{orderItem.setOrderCustomer(orderCustomerRepository.findById(idOrderCustomer).get());
+        //                                         orderItem.setProduct(orderItem.getProduct());});
+        orderCustomer.setOrderItemList(orderCustomer.getOrderItemList());
+        orderCustomerRepository.save(orderCustomer);
+        double total = 0;
+        double value =0;
+        for(OrderItem orderItem:orderCustomer.getOrderItemList()){
+            total += orderItem.getProduct().getPrice()*orderItem.getQuantity();
+            value = orderItem.getProduct().getPrice()*orderItem.getQuantity();
+        }
+        model.addAttribute("orderCustomer", orderCustomer);
+        model.addAttribute("customer", orderCustomer.getCustomer());
+        model.addAttribute("total", total);
+        model.addAttribute("value", value);
+        attributes.addFlashAttribute("message", "Comanda a fost editata cu succes!");
 
         return "customer-order";
     }
