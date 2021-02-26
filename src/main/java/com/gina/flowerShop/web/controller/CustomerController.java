@@ -78,12 +78,16 @@ public class CustomerController {
 
     @PostMapping("/customer/add/address")
     public String customerAddAddress(@Valid @ModelAttribute("shippingAddress")ShippingAddress shippingAddress,
-                                     BindingResult result,
-                                     @AuthenticationPrincipal UserDetails currentUser,Model model){
+                                     BindingResult result, RedirectAttributes redirectAttributes,
+                                     @AuthenticationPrincipal UserDetails currentUser, Model model){
         if(result.hasErrors()){
             return "customer-add-address";
         }
         try{
+            if(shippingAddressRepository.countByName(shippingAddress.getName())==1L){
+                redirectAttributes.addFlashAttribute("message", shippingAddress.getName()+" are adresa poate doriti sa o editati?!");
+                return "redirect:/customer/shippingAddresses";
+            }
             Customer customer = customerRepository.findByUsername(currentUser.getUsername());
             shippingAddress.setCustomer(customer);
             shippingAddressRepository.save(shippingAddress);
