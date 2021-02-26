@@ -1,9 +1,6 @@
 package com.gina.flowerShop.web.controller;
 
-import com.gina.flowerShop.model.Customer;
-import com.gina.flowerShop.model.OrderCustomer;
-import com.gina.flowerShop.model.OrderItem;
-import com.gina.flowerShop.model.Status;
+import com.gina.flowerShop.model.*;
 import com.gina.flowerShop.repository.*;
 import com.gina.flowerShop.service.OrderCustomerService;
 import com.gina.flowerShop.service.ProductService;
@@ -13,16 +10,18 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpSession;
+import javax.validation.Valid;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Controller
 public class CustomerOrderController {
@@ -35,6 +34,7 @@ public class CustomerOrderController {
     @Autowired private CustomerRepository customerRepository;
     @Autowired private ShippingAddressRepository shippingAddressRepository;
     @Autowired private OrderCustomerService orderCustomerService;
+    @Autowired private OrderCustomerRepository orderCustomerRepository;
 
     @GetMapping("/by/product/{idProduct}")
     public String byProduct(@PathVariable(value = "idProduct", required = false)Long idProduct, @AuthenticationPrincipal UserDetails currentUser,
@@ -148,6 +148,68 @@ public class CustomerOrderController {
         Customer customer = customerRepository.findByUsername(currentUser.getUsername());
         redirectAttributes.addFlashAttribute("message", customer.getFullName()+", nu aveti produse in cos");
         return "redirect:/customer/byPage";
+    }
+
+    @GetMapping("/customer/cart/form")
+    public String displayCartForm(@AuthenticationPrincipal UserDetails currentUser, Model model){
+        OrderCustomer orderCustomer = (OrderCustomer) httpSession.getAttribute("order");
+
+        //orderCustomer.setStatus(Status.AFFECTED);
+        //orderCustomer.setDate(LocalDate.now());
+        //orderCustomer.setTime(LocalTime.now());
+        List<OrderItem>orderItemList = orderCustomer.getOrderItemList();
+        double total=0;
+        double value = 0;
+        for(OrderItem orderItem:orderItemList){
+            total+=orderItem.getProduct().getPrice()*orderItem.getQuantity();
+            value = orderItem.getProduct().getPrice()*orderItem.getQuantity();
+        }
+        orderCustomer.setOrderItemList(orderItemList);
+        Customer customer = customerRepository.findByUsername(currentUser.getUsername());
+        orderCustomer.setCustomer(customer);
+        model.addAttribute("customer", customer);
+        model.addAttribute("total", total);
+        model.addAttribute("value", value);
+        Set<ShippingAddress> shippingAddresses = new HashSet<>();
+        List<ShippingAddress>findShippingAddressList = shippingAddressRepository.findAllByCustomerId(customer.getId());
+        for(ShippingAddress shippingAddress:findShippingAddressList){
+
+            shippingAddresses.add(shippingAddress);
+        }
+        model.addAttribute("shippingAddresses", shippingAddresses);
+        model.addAttribute("orderCustomer", orderCustomer);
+
+        return "customer-cart";
+    }
+
+    @PostMapping("/customer/save/order")
+    public String saveOrder(@Valid @ModelAttribute("orderCustomer") OrderCustomer orderCustomer,
+                            BindingResult result, @AuthenticationPrincipal UserDetails currentUser,
+                            Model model){
+        if(result.hasErrors()){
+            return "customer-cart";
+        }
+        Customer customer = customerRepository.findByUsername(currentUser.getUsername());
+
+
+        double total = 0;
+        for(OrderItem orderItem:orderCustomer.getOrderItemList()){
+            total+=orderItem.getProduct().getPrice()*orderItem.getQuantity();
+
+        }
+
+        orderCustomer.getOrderItemList().forEach(item -> item.setOrderCustomer(orderCustomer));
+        orderCustomer.setCustomer(customer);
+        orderCustomer.setStatus(Status.AFFECTED);
+        orderCustomer.setDate(LocalDate.now());
+        orderCustomer.setTime(LocalTime.now());
+        orderCustomerRepository.save(orderCustomer);
+        model.addAttribute("total", total);
+        model.addAttribute("orderCustomer", orderCustomer);
+        model.addAttribute("customer", customer);
+        httpSession.removeAttribute("order");
+
+        return "customer-order";
     }
 
 
