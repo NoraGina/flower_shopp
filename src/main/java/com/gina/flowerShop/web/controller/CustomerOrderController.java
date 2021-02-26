@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
@@ -265,6 +266,25 @@ public class CustomerOrderController {
         attributes.addFlashAttribute("message", "Comanda a fost editata cu succes!");
 
         return "customer-order";
+    }
+
+    @Transactional
+    @GetMapping("/customer/delete/order/{idOrderCustomer}")
+    public String deleteOrder(@PathVariable("idOrderCustomer") Long idOrderCustomer, Model model,
+                              RedirectAttributes attributes) {
+
+        Customer customer = orderCustomerRepository.findById(idOrderCustomer).get().getCustomer();
+        OrderCustomer orderCustomer = orderCustomerRepository.findById(idOrderCustomer).get();
+        List<ShippingAddress>shippingAddressList = shippingAddressRepository.findAllByCustomerId(customer.getId());
+        ShippingAddress shippingAddress = orderCustomer.getShippingAddress();
+
+        attributes.addFlashAttribute("message", customer.getFullName()+ ", Doriti sa faceti alta comanda? Sau sa iesiti din aplicatie!");
+        orderCustomerRepository.deleteById(idOrderCustomer);
+        shippingAddressList.add(shippingAddress);
+        Set<ShippingAddress>shippingAddressSet = new HashSet<>(shippingAddressList);
+        customer.setShippingAddresses(shippingAddressSet);
+        return "redirect:/customer/byPage";
+
     }
 
 
