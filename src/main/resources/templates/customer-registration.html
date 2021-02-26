@@ -137,7 +137,7 @@
             </div>
             <div class="input-container">
                 <i class="fa fa-envelope icon"></i>
-                <input class="input-field" type="text" th:field = "*{username}" placeholder="@Email" required/>
+                <input class="input-field" type="text" th:field = "*{username}" placeholder=" username or @Email" required/>
                 <span th:if="${#fields.hasErrors('username')}" th:errors="*{username}" class="text-danger"></span>
             </div>
             <div class="input-container">
@@ -148,12 +148,24 @@
                         <i class="fa fa-eye icon"  type="button" id="eye"></i>
                      </span>
             </div>
+            <div class="input-container">
+                <i class="fas fa-at icon"></i>
+                <input class="input-field" type="text" th:field = "*{email}" placeholder="@ email" required/>
+                <span th:if="${#fields.hasErrors('email')}" th:errors="*{email}" class="text-danger"></span>
+            </div>
+
+            <div class="input-container">
+                <i class="fas fa-phone icon"></i>
+                <input class="input-field" type="text" th:field = "*{phone}" placeholder="enter phone number" required/>
+                <span th:if="${#fields.hasErrors('phone')}" th:errors="*{phone}" class="text-danger"></span>
+            </div>
             <button type="submit" class="btn">Register</button>
             <span>Already registered? <a href="/" th:href="@{/login}">Login
         here</a></span>
         </fieldset>
     </form>
 </div>
+<script src="https://kit.fontawesome.com/7f4724c75b.js" crossorigin="anonymous"></script>
 <script>
         function show() {
         var p = document.getElementById('pwd');
