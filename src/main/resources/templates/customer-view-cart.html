@@ -139,7 +139,7 @@ caption{
                 <th scope="col">Optiuni</th>
                 </thead>
                 <tbody>
-               
+
                 <tr th:each="orderItem: ${items}">
                     <td data-label="Nume produs" th:text="${orderItem.product.productName}" th:value="orderItem.product.idProduct"></td>
                     <td data-label="Pret"  th:text="${#numbers.formatDecimal(orderItem.product.price, 0, 'COMMA', 2, 'POINT')}"></td>
