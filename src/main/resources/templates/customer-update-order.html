@@ -50,7 +50,10 @@ caption{
     font-style: italic;
 }
 
+input{
+font-size:16px;
 
+}
 .main-container{
     background-color: papayawhip;
     border-radius: 10px;
@@ -61,15 +64,24 @@ caption{
 .info-container{
     padding: 10px;
 }
-.quantity-input{
-width:30%;
-}
-.price-input{
-width:30%;
-}
 .inputs{
+margin-bottom:2px;
 width:100%;
 }
+#quantity-input{
+width:40%;
+}
+#price-input{
+background-color:papayawhip;
+border:0px papayawhip;
+width:40%;
+}
+#name-input{
+background-color:papayawhip;
+outline: none !important;
+border:0px papayawhip;
+}
+
 .col-25{
     float: left;
     width: 25%;
@@ -159,7 +171,7 @@ width:100%;
                         <label>Adresa:</label>
                     </div><!--End col 25 order client-->
                     <div class="col-75">
-                        <input th:field ="*{shippingAddress.idShippingAddress}"  th:name="idShippingAddress">
+                        <input th:field ="*{shippingAddress.idShippingAddress}" type="hidden" th:name="idShippingAddress">
                         <input th:field="*{shippingAddress.name}" class="inputs"  type="text"/><br>
                         <input th:field="*{shippingAddress.city}" class="inputs"  type="text"/><br>
                         <input th:field="*{shippingAddress.address}" class="inputs"  type="text"/><br>
@@ -171,25 +183,21 @@ width:100%;
                     <caption>Produse comandate</caption>
                     <thead>
                     <tr>
-                        <th scope="col">Item</th>
                         <th scope="col">Nume produs</th>
-                        <th scope="col">Produs</th>
                         <th scope="col">Pret</th>
                         <th scope="col">Cantitate</th>
-                        <th scope="col">Valoare</th>
                     </tr>
                     </thead>
                     <tbody>
                     <tr th:each="row : ${orderCustomer.orderItemList} ">
-                        <td data-label="Item"><input th:field="*{orderItemList[__${rowStat.index}__].idOrderItem}" th:value="orderItem.idOrderItem" class="inputs"></td>
-                        <td data-label="Nume produs"><input th:field="*{orderItemList[__${rowStat.index}__].product.productName}" class="inputs"/></td>
-                        <td data-label="Produs"><input th:field="*{orderItemList[__${rowStat.index}__].product.idProduct}" class="inputs" /></td>
-                        <td data-label="Pret"><input th:field="*{orderItemList[__${rowStat.index}__].product.price}" class="inputs" /></td>
+                        <td data-label="Nume produs"><input th:field="*{orderItemList[__${rowStat.index}__].product.productName}" id="name-input"/>
+                            <input th:field="*{orderItemList[__${rowStat.index}__].product.idProduct}" id="id-input"  type="hidden"/></td>
+                        <td data-label="Pret"><input th:field="*{orderItemList[__${rowStat.index}__].product.price}" id="price-input" /></td>
                         <td data-label="Cantitate" class="quantity-row">
                             <input type="number"
                                    th:field="*{orderItemList[__${rowStat.index}__].quantity}"
-                                   th:value="orderItem.quantity" class="quantity-input"></td>
-                        <td data-label="Valoare" th:text="${#numbers.formatDecimal(value, 0, 'COMMA', 2, 'POINT')}"></td>
+                                   th:value="orderItem.quantity" id="quantity-input" ></td>
+
                     </tr>
 
                     </tbody>

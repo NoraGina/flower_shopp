@@ -63,6 +63,7 @@
         }
 
         .input-field {
+            font-family: Georgia;
             font-size: 16px;
             padding: 5px;
             outline: none;
@@ -125,7 +126,7 @@
                     <div class="col-75">
                         <input type="hidden" th:field="*{customer.id}"/>
                         <input class="input-field" type="text" id="user" th:value = "*{customer.fullName}" disabled required/>
-                        <!--<span th:if="${#fields.hasErrors('fullName')}" th:errors="*{fullName}" class="text-danger"></span>-->
+
                     </div><!--***End col75 USER***-->
                 </div><!-- **** End row***-->
             </div><!-- **** End form group***-->

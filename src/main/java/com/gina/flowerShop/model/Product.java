@@ -42,6 +42,9 @@ public class Product {
     @Column(name = "stock")
     private Integer stock;
 
+    @OneToMany(mappedBy = "product", cascade=CascadeType.MERGE, fetch = FetchType.EAGER)
+    private List<OrderItem> orderItemList;
+
     public Product() {
     }
 
@@ -57,7 +60,19 @@ public class Product {
         this.stock = stock;
     }
 
-
+    public Product(Long idProduct, String productName, String description,
+                   double price, String origin, byte[] image, Set<Category> categories,
+                   Integer stock, List<OrderItem> orderItemList) {
+        this.idProduct = idProduct;
+        this.productName = productName;
+        this.description = description;
+        this.price = price;
+        this.origin = origin;
+        this.image = image;
+        this.categories = categories;
+        this.stock = stock;
+        this.orderItemList = orderItemList;
+    }
 
     public Long getIdProduct() {
         return idProduct;
@@ -128,6 +143,13 @@ public class Product {
         this.categories = categories;
     }
 
+    public List<OrderItem> getOrderItemList() {
+        return orderItemList;
+    }
+
+    public void setOrderItemList(List<OrderItem> orderItemList) {
+        this.orderItemList = orderItemList;
+    }
 
     @Override
     public boolean equals(Object o) {

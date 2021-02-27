@@ -209,12 +209,11 @@
                     <th scope="col">Nume produs</th>
                     <th scope="col">Pret</th>
                     <th scope="col">Cantitate</th>
-                    <th scope="col">Valoare</th>
                     </thead>
                     <tbody>
                     <tr th:each="row : ${orderCustomer.orderItemList}">
                         <td data-label="Nume produs">
-                            <input th:field="*{orderItemList[__${rowStat.index}__].product.productName}" class="name-txt" />
+                            <input th:field="*{orderItemList[__${rowStat.index}__].product.productName}"/>
                             <input th:field="*{orderItemList[__${rowStat.index}__].product.idProduct}" type="hidden"/>
                         </td>
                         <td data-label="Pret">
@@ -225,7 +224,7 @@
                                    th:field="*{orderItemList[__${rowStat.index}__].quantity}"
                                    th:value="orderItem.quantity" class="quantity-txt">
                         </td>
-                        <td data-label="Valoare" th:text="${#numbers.formatDecimal(value, 0, 'COMMA', 2, 'POINT')}"></td>
+
                     </tr>
                     </tbody>
                 </table>

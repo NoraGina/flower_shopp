@@ -144,7 +144,7 @@ public class OrderCustomer {
     public double getTotal(){
         double total = 0;
         for(OrderItem orderItem: orderItemList){
-            total += orderItem.getQuantity()* orderItem.getProduct().getPrice();
+            total = orderItem.getQuantity()* orderItem.getProduct().getPrice();
         }
         return total;
     }

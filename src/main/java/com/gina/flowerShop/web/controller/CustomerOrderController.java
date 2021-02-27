@@ -210,16 +210,8 @@ public class CustomerOrderController {
     }
 
     @GetMapping("/customer/order")
-    private String displayCustomerOrder( @AuthenticationPrincipal UserDetails currentUser,
-                                         @ModelAttribute("orderCustomer") OrderCustomer orderCustomer,Model model){
-        Customer customer = customerRepository.findByUsername(currentUser.getUsername());
-        double total = 0;
-        for(OrderItem orderItem:orderCustomer.getOrderItemList()){
-            total+=orderItem.getProduct().getPrice()*orderItem.getQuantity();
-        }
-        model.addAttribute("total", total);
-        model.addAttribute("customer", customer);
-        model.addAttribute("orderCustomer", orderCustomer);
+    private String displayCustomerOrder(Model model){
+
         return "customer-order";
     }
 
@@ -232,7 +224,6 @@ public class CustomerOrderController {
             Customer customer = orderCustomer.getCustomer();
             ShippingAddress shippingAddress = orderCustomer.getShippingAddress();
             List<OrderItem>orderItemList = orderItemRepository.findAllByIdOrderCustomer(idOrderCustomer);
-
             orderCustomer.setOrderItemList(orderItemList);
             model.addAttribute("orderCustomer", orderCustomer);
             model.addAttribute("customer", customer);
@@ -261,24 +252,27 @@ public class CustomerOrderController {
         ShippingAddress shippingAddress = orderCustomer.getShippingAddress();
         shippingAddress.setCustomer(customer);
 
-        orderCustomer.getOrderItemList().forEach(item -> item.setOrderCustomer(orderCustomer));
-        // orderCustomer.getOrderItemList().forEach(orderItem ->{orderItem.setOrderCustomer(orderCustomerRepository.findById(idOrderCustomer).get());
-        //                                         orderItem.setProduct(orderItem.getProduct());});
-        orderCustomer.setOrderItemList(orderCustomer.getOrderItemList());
-        orderCustomerRepository.save(orderCustomer);
         double total = 0;
         double value =0;
+        
         for(OrderItem orderItem:orderCustomer.getOrderItemList()){
-            total += orderItem.getProduct().getPrice()*orderItem.getQuantity();
-            value = orderItem.getProduct().getPrice()*orderItem.getQuantity();
+
+                total += orderItem.getProduct().getPrice()*orderItem.getQuantity();
+                value = orderItem.getProduct().getPrice()*orderItem.getQuantity();
+
+
         }
+        orderCustomer.setOrderItemList(orderCustomer.getOrderItemList());
+        orderCustomer.getOrderItemList().forEach(item -> item.setOrderCustomer(orderCustomer));
+        orderCustomerRepository.save(orderCustomer);
+
         model.addAttribute("orderCustomer", orderCustomer);
         model.addAttribute("customer", orderCustomer.getCustomer());
         model.addAttribute("total", total);
         model.addAttribute("value", value);
         attributes.addFlashAttribute("message", "Comanda a fost editata cu succes!");
 
-        return "redirect:/customer/order";
+        return "customer-order";
     }
 
     @Transactional

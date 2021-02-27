@@ -45,12 +45,9 @@ public class MainController {
         model.addAttribute("customer", customerDto);
         model.addAttribute("products", productService.findAll());
         model.addAttribute("categoryList", categoryRepository.findByOrderByCategoryNameAsc());
-        List<String> origins = new ArrayList<>();
-        for(String s : productService.findDistinctOrigin()){
-            s = s.replaceAll(",", "");
-            origins.add(s);
-        }
-        model.addAttribute("origins",origins);
+
+
+        model.addAttribute("origins",productService.findDistinctOrigin());
         return "customer-byPage";
     }
 
