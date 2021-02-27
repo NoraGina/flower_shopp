@@ -149,11 +149,7 @@ public class CustomerOrderController {
         return "redirect:/customer/byPage";
     }
 
-    @GetMapping("/customer/order")
-    private String displayCustomerOrder(Model model){
 
-        return "customer-order";
-    }
 
     @GetMapping("/customer/cart/form")
     public String displayCartForm(@AuthenticationPrincipal UserDetails currentUser, Model model){
@@ -195,14 +191,10 @@ public class CustomerOrderController {
             return "customer-save-cart";
         }
         Customer customer = customerRepository.findByUsername(currentUser.getUsername());
-
-
         double total = 0;
         for(OrderItem orderItem:orderCustomer.getOrderItemList()){
             total+=orderItem.getProduct().getPrice()*orderItem.getQuantity();
-
         }
-
         orderCustomer.getOrderItemList().forEach(item -> item.setOrderCustomer(orderCustomer));
         orderCustomer.setCustomer(customer);
         orderCustomer.setStatus(Status.AFFECTED);
@@ -214,6 +206,20 @@ public class CustomerOrderController {
         model.addAttribute("customer", customer);
         httpSession.removeAttribute("order");
 
+        return "customer-order";
+    }
+
+    @GetMapping("/customer/order")
+    private String displayCustomerOrder( @AuthenticationPrincipal UserDetails currentUser,
+                                         @ModelAttribute("orderCustomer") OrderCustomer orderCustomer,Model model){
+        Customer customer = customerRepository.findByUsername(currentUser.getUsername());
+        double total = 0;
+        for(OrderItem orderItem:orderCustomer.getOrderItemList()){
+            total+=orderItem.getProduct().getPrice()*orderItem.getQuantity();
+        }
+        model.addAttribute("total", total);
+        model.addAttribute("customer", customer);
+        model.addAttribute("orderCustomer", orderCustomer);
         return "customer-order";
     }
 
@@ -272,7 +278,7 @@ public class CustomerOrderController {
         model.addAttribute("value", value);
         attributes.addFlashAttribute("message", "Comanda a fost editata cu succes!");
 
-        return "redirect:customer-order";
+        return "redirect:/customer/order";
     }
 
     @Transactional
